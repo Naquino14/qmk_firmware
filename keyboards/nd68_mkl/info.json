@@ -1,0 +1,37 @@
+{
+    "manufacturer": "Nate Aquino",
+    "keyboard_name": "nd68_mkl",
+    "maintainer": "naquino14",
+    "bootloader": "rp2040",
+    "diode_direction": "COL2ROW",
+    "features": {
+        "bootmagic": true,
+        "command": false,
+        "console": false,
+        "extrakey": true,
+        "mousekey": false,
+        "nkro": true
+    },
+    "matrix_pins": {
+        "cols": ["GP23", "GP22"],
+        "rows": ["GP25", "GP24"]
+    },
+    "processor": "RP2040",
+    "url": "",
+    "usb": {
+        "device_version": "1.0.0",
+        "pid": "0xDEAD",
+        "vid": "0xBEEF"
+    },
+    "layouts": {
+        "LAYOUT_default": {
+            "layout": [
+                {"matrix": [0, 0], "x": 0, "y": 0, "label": "one"},
+                {"matrix": [0, 1], "x": 1, "y": 0, "label": "two"},
+                {"matrix": [1, 0], "x": 0, "y": 1, "label": "three"},
+                {"matrix": [1, 1], "x": 1, "y": 1, "label": "four"}
+            ]
+        }
+    }
+
+}
