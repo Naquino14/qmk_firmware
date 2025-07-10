@@ -1,0 +1,3 @@
+#define ENCODER_A_PINS { GP23 }
+#define ENCODER_B_PINS { GP22 }
+#define ENCODER_RESOLUTION 4
