@@ -46,29 +46,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                   _______, _______, _______, _______, _______, _______
     )
 };
-
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (clockwise) {
-        tap_code(KC_VOLU); // Volume Up
-    } else {
-        tap_code(KC_VOLD); // Volume Down
-    }
-
-    return false;
-}
-
-void keyboard_post_init_user(void) {
-    // Initialize the encoder button GPIO pin
-    gpio_set_pin_input_high(ENCODERS_BUTTON_GPIO);
-}
-
-
-void matrix_scan_user(void) {
-    static bool mute_btn_prev = false;
-    bool mute_btn_pressed = !gpio_read_pin(ENCODERS_BUTTON_GPIO); // Active low
-
-    if (mute_btn_pressed && !mute_btn_prev)
-        tap_code(KC_MUTE);
-
-    mute_btn_prev = mute_btn_pressed;
-}
