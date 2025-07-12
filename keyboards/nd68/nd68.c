@@ -27,36 +27,39 @@ void keyboard_post_init_kb(void) {
  void matrix_scan_kb(void) {
     static bool mute_btn_prev = false;
     bool mute_btn_pressed = !gpio_read_pin(ENCODERS_BUTTON_GPIO); // Active low
+    bool fn_act = layer_state_is(1);
 
-    if (mute_btn_pressed && !mute_btn_prev)
-        tap_code(KC_MUTE);
+    if (mute_btn_pressed && !mute_btn_prev) {
+        if (!fn_act)
+            tap_code(KC_MUTE);
+        else
+            rgb_matrix_step_noeeprom();
+    }
 
     mute_btn_prev = mute_btn_pressed;
 }
 
-// led_config_t g_led_config = {{
-//     // Key matrix to led index
-//     { 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,     11,     12,     13,     14},
-//     {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,     26,     27,     28,     29},
-//     {30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,     41,     42,     43,     NO_LED},
-//     {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,     55,     56,     57,     NO_LED},
-//     {58, 59, 60, 61, 62, 63, 64, 65, 66, 67, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED}
-// }, {
-//     // LED index to physical position
-//     {  0,  0}, { 16,  0}, { 32,  0}, { 48,  0}, { 64,  0}, { 80,  0}, { 96,  0}, {112,  0}, {128,  0}, {144,  0}, {160,  0}, {176,  0}, {192,  0}, {208,  0}, {224,  0},
-//     {  0, 16}, { 16, 16}, { 32, 16}, { 48, 16}, { 64, 16}, { 80, 16}, { 96, 16}, {112, 16}, {128, 16}, {144, 16}, {160, 16}, {176, 16}, {192, 16}, {208, 16}, {224, 16},
-//     {  0, 32}, { 16, 32}, { 32, 32}, { 48, 32}, { 64, 32}, { 80, 32}, { 96, 32}, {112, 32}, {128, 32}, {144, 32}, {160, 32}, {176, 32}, {192, 32}, {208, 32},
-//     {  0, 48}, { 32, 48}, { 48, 48}, { 64, 48}, { 80, 48}, { 96, 48}, {112, 48}, {128, 48}, {144, 48}, {160, 48}, {176, 48}, {192, 48}, {208, 48}, {224, 48},
-//     {  0, 64}, { 16, 64}, { 32, 64}, { 64, 64}, { 84, 64}, {112, 64}, {140, 64}, {160, 64}, {176, 64}, {192, 64}, {208, 64}, {224, 64}
-// }, {
-//     // Flags
-//     LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
-//     LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
-//     LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
-//     LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
-//     LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT
-// }};
+bool encoder_update_kb(uint8_t index, bool clockwise) {
+    if (!encoder_update_user(index, clockwise))
+      return false; // user overwrote callback
+    // if fn is held, change led brightness
+    bool fn_act = layer_state_is(1);
 
+    if (clockwise) {
+        if (!fn_act)
+            tap_code(KC_VOLU);
+        else
+            rgb_matrix_increase_val_noeeprom();
+    }
+    else {
+        if (!fn_act)
+            tap_code(KC_VOLD);
+        else
+            rgb_matrix_decrease_val_noeeprom();
+    }
+
+    return true;
+}
 
 led_config_t g_led_config = {{
     // Key matrix to led index
@@ -64,7 +67,7 @@ led_config_t g_led_config = {{
     {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29},
     {30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, NO_LED},
     {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, NO_LED},
-    {58, 59, 60, NO_LED, 61, NO_LED, 62, 63, 64, 65, 66, 67, NO_LED, NO_LED, NO_LED}
+    {58, 59, 60, 62, 64, 65, 66, 67, 68, 69, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED}
 }, {
     // led index to physical position
     {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 0}, {9, 0}, {10, 0}, {11, 0}, {12, 0}, {13, 0}, {15, 0},
