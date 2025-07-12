@@ -61,6 +61,15 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     return true;
 }
 
+bool rgb_matrix_indicators_kb() {
+    rgb_matrix_indicators_user();
+
+    if (host_keyboard_led_state().caps_lock)
+        rgb_matrix_set_color(CAPS_LOCK_IDX, 255, 255, 255);
+
+    return true;
+}
+
 led_config_t g_led_config = {{
     // Key matrix to led index
     { 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14},

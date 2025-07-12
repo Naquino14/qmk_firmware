@@ -8,6 +8,7 @@
 #define RGB_MATRIX_LED_COUNT 70 // 68 keys + 2 more for spacebar
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200 // rev 1 missing decouplers, this is a safety net
 #define RGB_MATRIX_SLEEP
+#define CAPS_LOCK_IDX 30
 
 // RGB effects
 #define ENABLE_RGB_MATRIX_ALPHAS_MODS
