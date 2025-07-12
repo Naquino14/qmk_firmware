@@ -4,10 +4,16 @@
 #define ENCODERS_BUTTON_GPIO GP24
 
 // Led Matrix Defs
-#define WS2812_DI_PIN GP21
+#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_CYCLE_OUT_IN
+#define RGB_MATRIX_ENABLE_NOEEPROM false
+#define RGB_MATRIX_STARTUP_HUE 0
+#define RGB_MATRIX_STARTUP_SAT 255
+#define RGB_MATRIX_STARTUP_VAL 200
+#define RGB_MATRIX_STARTUP_SPD 127
 #define RGB_MATRIX_LED_COUNT 70 // 68 keys + 2 more for spacebar
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200 // rev 1 missing decouplers, this is a safety net
 #define RGB_MATRIX_SLEEP
+#define WS2812_DI_PIN GP21
 #define CAPS_LOCK_IDX 30
 
 // RGB effects

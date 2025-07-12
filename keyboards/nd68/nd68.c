@@ -20,8 +20,8 @@ void keyboard_post_init_kb(void) {
     // Initialize the encoder button GPIO pin
     gpio_set_pin_input_high(ENCODERS_BUTTON_GPIO);
 
-    // set led effect
-    rgb_matrix_mode(RGB_MATRIX_CYCLE_LEFT_RIGHT);
+    // load rgb matrix defaults
+
 }
 
  void matrix_scan_kb(void) {
@@ -33,7 +33,7 @@ void keyboard_post_init_kb(void) {
         if (!fn_act)
             tap_code(KC_MUTE);
         else
-            rgb_matrix_step_noeeprom();
+            rgb_matrix_step();
     }
 
     mute_btn_prev = mute_btn_pressed;
@@ -49,13 +49,13 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
         if (!fn_act)
             tap_code(KC_VOLU);
         else
-            rgb_matrix_increase_val_noeeprom();
+            rgb_matrix_increase_val();
     }
     else {
         if (!fn_act)
             tap_code(KC_VOLD);
         else
-            rgb_matrix_decrease_val_noeeprom();
+            rgb_matrix_decrease_val();
     }
 
     return true;
