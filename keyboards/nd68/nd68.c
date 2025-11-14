@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- #include "quantum.h"
+#include "quantum.h"
 
 void keyboard_post_init_kb(void) {
     // Initialize the encoder button GPIO pin
@@ -63,6 +63,10 @@ bool rgb_matrix_indicators_kb() {
 
     if (host_keyboard_led_state().caps_lock)
         rgb_matrix_set_color(CAPS_LOCK_IDX, 255, 255, 255);
+
+    // check if _FIGHT layer is active to light right alt
+    if (layer_state_is(FIGHT_LAYER))
+        rgb_matrix_set_color(RIGHT_ALT_IDX, 255, 0, 0);
 
     return true;
 }
