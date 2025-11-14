@@ -107,6 +107,35 @@ enum xbox_btns {
     BTN_LT,
 };
 
+static uint8_t dpad_state = 0;
+
+// bitmask
+#define DPAD_UP    (1<<0)
+#define DPAD_RIGHT (1<<1)
+#define DPAD_DOWN  (1<<2)
+#define DPAD_LEFT  (1<<3)
+
+static int8_t dpad_to_hat(uint8_t state) {
+    // cancel opposite vertical directions
+    if ((state & DPAD_UP) && (state & DPAD_DOWN)) state &= ~(DPAD_UP | DPAD_DOWN);
+    // cancel opposite horizontal directions
+    if ((state & DPAD_LEFT) && (state & DPAD_RIGHT)) state &= ~(DPAD_LEFT | DPAD_RIGHT);
+
+    // now map remaining pressed keys to hat values
+    switch (state) {
+        case DPAD_UP: return 0;
+        case DPAD_UP | DPAD_RIGHT: return 1;
+        case DPAD_RIGHT: return 2;
+        case DPAD_DOWN | DPAD_RIGHT: return 3;
+        case DPAD_DOWN: return 4;
+        case DPAD_DOWN | DPAD_LEFT: return 5;
+        case DPAD_LEFT: return 6;
+        case DPAD_UP | DPAD_LEFT: return 7;
+        default: return -1; // neutral if nothing pressed
+    }
+}
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_LAYER_ON(_FIGHT)) {
         switch (keycode) {
@@ -123,10 +152,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case JS_L2:   record->event.pressed ? register_joystick_button(BTN_LT) : unregister_joystick_button(BTN_LT); return false;
 
             // D-pad (hat switch)
-            case JS_UP:    joystick_set_hat(record->event.pressed ? 0 : -1); return false;
-            case JS_RIGHT: joystick_set_hat(record->event.pressed ? 2 : -1); return false;
-            case JS_DOWN:  joystick_set_hat(record->event.pressed ? 4 : -1); return false;
-            case JS_LEFT:  joystick_set_hat(record->event.pressed ? 6 : -1); return false;
+            case JS_UP:
+                if (record->event.pressed)
+                    dpad_state |= DPAD_UP;
+                else
+                    dpad_state &= ~DPAD_UP;
+                joystick_set_hat(dpad_to_hat(dpad_state));
+                return false;
+
+            case JS_RIGHT:
+                if (record->event.pressed)
+                    dpad_state |= DPAD_RIGHT;
+                else
+                    dpad_state &= ~DPAD_RIGHT;
+                joystick_set_hat(dpad_to_hat(dpad_state));
+                return false;
+
+            case JS_DOWN:
+                if (record->event.pressed)
+                    dpad_state |= DPAD_DOWN;
+                else
+                    dpad_state &= ~DPAD_DOWN;
+                joystick_set_hat(dpad_to_hat(dpad_state));
+                return false;
+
+            case JS_LEFT:
+                if (record->event.pressed)
+                    dpad_state |= DPAD_LEFT;
+                else
+                    dpad_state &= ~DPAD_LEFT;
+                joystick_set_hat(dpad_to_hat(dpad_state));
+                return false;
+
 
             // Start / Select / Guide
             case JS_START:  record->event.pressed ? register_joystick_button(BTN_START) : unregister_joystick_button(BTN_START); return false;
